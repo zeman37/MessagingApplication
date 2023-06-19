@@ -1,0 +1,111 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.1.0'
+	id 'io.spring.dependency-management' version '1.1.0'
+	id "org.springdoc.openapi-gradle-plugin" version "1.6.0"
+	id 'nu.studer.jooq' version '8.2'
+}
+
+group = 'com.messaging'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	sourceCompatibility = '17'
+}
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-jooq'
+	//implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation('org.jooq:jooq:3.18.0')
+	implementation('org.jooq:jooq-meta-extensions-liquibase:3.18.4')
+	implementation 'org.liquibase:liquibase-core'
+	implementation 'org.jooq:jooq-meta-extensions-liquibase:3.18.4'
+	jooqGenerator 'org.jooq:jooq-meta-extensions-liquibase:3.18.4'
+	runtimeOnly 'com.h2database:h2'
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	//testImplementation 'org.springframework.security:spring-security-test'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+import static org.jooq.impl.SQLDataType.*;
+import org.jooq.*;
+import org.jooq.impl.*;
+
+import org.jooq.meta.jaxb.Logging
+
+jooq {
+
+	configurations {
+		main {  // name of the jOOQ configuration
+
+			generationTool {
+				logging = Logging.WARN
+				generator {
+					name = 'org.jooq.codegen.DefaultGenerator'
+					database {
+						name = 'org.jooq.meta.extensions.liquibase.LiquibaseDatabase'
+						properties {
+
+							// Specify the root path, e.g. a path in your Maven directory layout
+							property {
+								key = 'rootPath'
+								value = 'C:\\Users\\Mantas\\Desktop\\SPRING\\application'
+							}
+
+							// Specify the classpath location of your XML, YAML, or JSON script.
+							property {
+								key = 'scripts'
+								value = 'src/main/resources/db/changelog/changelog-master.xml'
+							}
+
+							// Whether you want to include liquibase tables in generated output
+							//
+							// - false (default)
+							// - true: includes DATABASECHANGELOG and DATABASECHANGELOGLOCK tables
+							property {
+								key = 'includeLiquibaseTables'
+								value = false
+							}
+
+							// The property "changeLogParameters.contexts" will be passed on to the
+							// liquibase.database.Database.update() call (jOOQ 3.13.2+).
+							// See https://www.liquibase.org/documentation/contexts.html
+							property {
+								key = 'changeLogParameters.contexts'
+								value = '!test'
+							}
+						}
+					}
+					generate {
+						deprecated = false
+						records = true
+						immutablePojos = true
+						fluentSetters = true
+					}
+					target {
+						packageName = 'com.application.generated.db'
+						directory = 'src/main/database'  // default (can be omitted)
+					}
+					strategy.name = 'org.jooq.codegen.DefaultGeneratorStrategy'
+				}
+			}
+		}
+	}
+}

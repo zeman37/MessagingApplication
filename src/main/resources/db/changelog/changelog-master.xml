@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:pro="http://www.liquibase.org/xml/ns/pro"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd
+      http://www.liquibase.org/xml/ns/pro
+      http://www.liquibase.org/xml/ns/pro/liquibase-pro-4.1.xsd">
+
+<!--    <include file="changeset-v1.0.xml"/>-->
+<!--    <include file="changeset-v1.1.xml"/>-->
+<!--    <include file="changeset-v1.2.xml"/>-->
+
+        <!-- I could not take different xml files into one for JOOQ to generate code thus I needed to list my changeset into one file :( -->
+        <changeSet id="1" author="Mantas">
+                <createTable tableName="users">
+                        <column name="id" type="int" autoIncrement="true">
+                                <constraints primaryKey="true"/>
+                        </column>
+                        <column name="username" type="varchar(20)">
+                                <constraints nullable="false"/>
+                        </column>
+                        <column name="password" type="varchar(255)">
+                                <constraints nullable="false"/>
+                        </column>
+                        <column name="is_admin" type="boolean">
+                                <constraints nullable="false"/>
+                        </column>
+                </createTable>
+        </changeSet>
+
+
+        <changeSet id="2" author="Mantas">
+                <createTable tableName="messages">
+                        <column name="id" type="int" autoIncrement="true">
+                                <constraints primaryKey="true"/>
+                        </column>
+                        <column name="user_id" type="int">
+                                <constraints nullable="false" foreignKeyName="fk_messages_users" references="users(id)"/>
+                        </column>
+                        <column name="text" type="varchar(255)">
+                                <constraints nullable="false"/>
+                        </column>
+                        <column name="message_date" type="datetime">
+                                <constraints nullable="false"/>
+                        </column>
+                </createTable>
+        </changeSet>
+
+
+        <changeSet author="Mantas" id="3">
+                <insert tableName="users">
+                        <column name="username" value="admin"/>
+                        <column name="password" value="probablyCh@ngeME"/>
+                        <column name="is_admin" value="TRUE"/>
+                </insert>
+        </changeSet>
+
+</databaseChangeLog>
