@@ -52,7 +52,6 @@ public class MessagingService {
                                 DSL.max(MESSAGES.MESSAGE_DATE),
                                 DSL.avg(DSL.length(MESSAGES.TEXT)),
                                 DSL.max(MESSAGES.TEXT))
-                                //DSL.field("RIGHT(MESSAGES.TEXT, LENGTH(MESSAGES.TEXT) - INSTR(MESSAGES.TEXT, '\n'))"))
                         .from(USERS)
                         .join(MESSAGES)
                         .on(USERS.ID.eq(MESSAGES.USER_ID))
@@ -72,6 +71,11 @@ public class MessagingService {
 
         }
         return statisticsMap;
+    }
+
+    public void createNewUser(String username, String password){
+        dslContext.insertInto(USERS, USERS.USERNAME, USERS.PASSWORD, USERS.IS_ADMIN)
+                .values(username, password, Boolean.FALSE).execute();
     }
 
 }

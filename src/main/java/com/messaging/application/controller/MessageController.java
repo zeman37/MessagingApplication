@@ -33,4 +33,12 @@ public class MessageController {
     public Map<String, Object> getStatistics() {
         return messagingService.getStatistics();
     }
+
+    @PostMapping("/admin/createNewUser")
+    public String createNewUser(@RequestBody Map<String, String> requestBody) {
+        String username = requestBody.get("username");
+        String password = requestBody.get("password");
+        messagingService.createNewUser(username, password);
+        return "Successfully created new user.\nUsername: " + username + "\nPassword: " + password;
+    }
 }
