@@ -78,4 +78,10 @@ public class MessagingService {
                 .values(username, password, Boolean.FALSE).execute();
     }
 
+    public void deleteUser(String username){
+        dslContext.deleteFrom(USERS)
+                .where(USERS.USERNAME.eq(username))
+                .execute();
+    }
+
 }

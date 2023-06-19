@@ -12,7 +12,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 public class MessageController {
-
+    private static final String USERNAME = "username";
     @Autowired
     MessagingService messagingService;
     @GetMapping("/getMessages")
@@ -22,7 +22,7 @@ public class MessageController {
 
     @PostMapping("/postMessage")
     public String postMessage(@RequestBody Map<String, String> requestBody) {
-        String username = requestBody.get("username");
+        String username = requestBody.get(USERNAME);
         String password = requestBody.get("password");
         String message = requestBody.get("message");
         messagingService.postMessage(username, password, message);
@@ -36,9 +36,16 @@ public class MessageController {
 
     @PostMapping("/admin/createNewUser")
     public String createNewUser(@RequestBody Map<String, String> requestBody) {
-        String username = requestBody.get("username");
+        String username = requestBody.get(USERNAME);
         String password = requestBody.get("password");
         messagingService.createNewUser(username, password);
         return "Successfully created new user.\nUsername: " + username + "\nPassword: " + password;
+    }
+
+    @PostMapping("/admin/deleteUser")
+    public String deleteUser(@RequestBody Map<String, String> requestBody) {
+        String username = requestBody.get(USERNAME);
+        messagingService.deleteUser(username);
+        return "Successfully deleted user.\nUsername: " + username;
     }
 }
