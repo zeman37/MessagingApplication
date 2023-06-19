@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 @Entity
 @Data
@@ -20,5 +20,5 @@ public class Message {
     @Column(name = "text")
     private String text;
     @Column(name = "message_date")
-    private ZonedDateTime messageDate;
+    private LocalDateTime messageDate;
 }
