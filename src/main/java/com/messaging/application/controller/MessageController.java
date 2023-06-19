@@ -15,7 +15,6 @@ public class MessageController {
 
     @Autowired
     MessagingService messagingService;
-    private static final String NOT_IMPLEMENTED = "Not implemented yet.";
     @GetMapping("/getMessages")
     public List<Message> getAllMessages() {
         return messagingService.getAllMessages();
@@ -31,7 +30,7 @@ public class MessageController {
     }
 
     @GetMapping("/admin/getStatistics")
-    public String getStatistics() {
-        return NOT_IMPLEMENTED;
+    public Map<String, Object> getStatistics() {
+        return messagingService.getStatistics();
     }
 }
