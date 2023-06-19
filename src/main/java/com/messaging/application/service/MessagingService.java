@@ -51,7 +51,7 @@ public class MessagingService {
                                 DSL.min(MESSAGES.MESSAGE_DATE),
                                 DSL.max(MESSAGES.MESSAGE_DATE),
                                 DSL.avg(DSL.length(MESSAGES.TEXT)),
-                                DSL.max(MESSAGES.TEXT))
+                                DSL.field(dslContext.select(MESSAGES.TEXT).from(MESSAGES).where(USERS.ID.eq(MESSAGES.USER_ID)).orderBy(MESSAGES.MESSAGE_DATE.desc()).limit(1)))
                         .from(USERS)
                         .join(MESSAGES)
                         .on(USERS.ID.eq(MESSAGES.USER_ID))
