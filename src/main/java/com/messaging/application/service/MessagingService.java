@@ -20,10 +20,11 @@ import java.util.Optional;
 
 import static com.application.generated.db.Tables.MESSAGES;
 import static com.application.generated.db.Tables.USERS;
+import static com.messaging.application.controller.MessageController.PASSWORD;
+import static com.messaging.application.controller.MessageController.USERNAME;
 
 @Service
 public class MessagingService {
-
     private DSLContext dslContext;
 
     @Autowired
@@ -39,9 +40,9 @@ public class MessagingService {
         return dslContext.selectFrom(MESSAGES).fetch().into(Message.class);
     }
 
-    public void postMessage(String username, String password, String message){
+    public void postMessage(String username, String message){
         dslContext.insertInto(MESSAGES, MESSAGES.USER_ID, MESSAGES.TEXT, MESSAGES.MESSAGE_DATE)
-                .values(1, message, LocalDateTime.now()).execute();
+                .values(dslContext.select(USERS.ID).from(USERS).where(USERS.USERNAME.eq(username)).execute(), message, LocalDateTime.now()).execute();
     }
 
     public Map<String, Object> getStatistics(){
@@ -82,6 +83,19 @@ public class MessagingService {
         dslContext.deleteFrom(USERS)
                 .where(USERS.USERNAME.eq(username))
                 .execute();
+    }
+
+    public boolean checkUser(Map<String, String> requestBody){
+        String username = requestBody.get(USERNAME);
+        String password = requestBody.get(PASSWORD);
+        Integer result = dslContext
+                .selectCount()
+                .from(USERS)
+                .where(USERS.USERNAME.eq(username)
+                        .and(USERS.PASSWORD.eq(password)))
+                .fetchOne(0, Integer.class);
+
+        return (result != null && result == 1);
     }
 
 }
