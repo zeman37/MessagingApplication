@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,6 +30,11 @@ public class MessagingService {
 
     public List<Message> getAllMessages() {
         return dslContext.selectFrom(Tables.MESSAGES).fetch().into(Message.class);
+    }
+
+    public void postMessage(String username, String password, String message){
+        dslContext.insertInto(Tables.MESSAGES, Tables.MESSAGES.USER_ID, Tables.MESSAGES.TEXT, Tables.MESSAGES.MESSAGE_DATE)
+                .values(1, message, LocalDateTime.now()).execute();
     }
 
 }

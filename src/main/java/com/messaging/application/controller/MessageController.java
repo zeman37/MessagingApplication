@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -21,8 +22,12 @@ public class MessageController {
     }
 
     @PostMapping("/postMessage")
-    public String postMessage() {
-        return NOT_IMPLEMENTED;
+    public String postMessage(@RequestBody Map<String, String> requestBody) {
+        String username = requestBody.get("username");
+        String password = requestBody.get("password");
+        String message = requestBody.get("message");
+        messagingService.postMessage(username, password, message);
+        return "Successfully inserted message.";
     }
 
     @GetMapping("/admin/getStatistics")
