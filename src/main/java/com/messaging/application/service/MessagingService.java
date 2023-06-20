@@ -2,6 +2,7 @@ package com.messaging.application.service;
 
 import com.messaging.application.models.Message;
 import org.jooq.DSLContext;
+import org.jooq.Record;
 import org.jooq.Record7;
 import org.jooq.Result;
 import org.jooq.impl.DSL;
@@ -20,8 +21,6 @@ import java.util.Optional;
 
 import static com.application.generated.db.Tables.MESSAGES;
 import static com.application.generated.db.Tables.USERS;
-import static com.messaging.application.controller.MessageController.PASSWORD;
-import static com.messaging.application.controller.MessageController.USERNAME;
 
 @Service
 public class MessagingService {
@@ -42,7 +41,8 @@ public class MessagingService {
 
     public void postMessage(String username, String message){
         dslContext.insertInto(MESSAGES, MESSAGES.USER_ID, MESSAGES.TEXT, MESSAGES.MESSAGE_DATE)
-                .values(dslContext.select(USERS.ID).from(USERS).where(USERS.USERNAME.eq(username)).execute(), message, LocalDateTime.now()).execute();
+                .values(dslContext.select(USERS.ID).from(USERS).where(USERS.USERNAME.eq(username)).fetch().get(0).value1(),
+                        message, LocalDateTime.now()).execute();
     }
 
     public Map<String, Object> getStatistics(){
@@ -85,16 +85,32 @@ public class MessagingService {
                 .execute();
     }
 
-    public boolean checkUser(Map<String, String> requestBody){
-        String username = requestBody.get(USERNAME);
-        String password = requestBody.get(PASSWORD);
-        Integer result = dslContext
-                .selectCount()
-                .from(USERS)
+    public Record queryUser(String username, String password){
+        return dslContext
+                .selectFrom(USERS)
                 .where(USERS.USERNAME.eq(username)
                         .and(USERS.PASSWORD.eq(password)))
-                .fetchOne(0, Integer.class);
+                .fetchOne();
+    }
 
+    public boolean checkIfUserIsRegistered(String username, String password){
+        return queryUser(username, password) != null;
+    }
+
+    public boolean isUserAdmin(String username, String password){
+        Record userFromDb = queryUser(username, password);
+        if(userFromDb != null){
+            return userFromDb.get(USERS.IS_ADMIN);
+        } else{
+            return false;
+        }
+    }
+
+    public boolean usernameTaken(String username){
+        Integer result = dslContext.selectCount()
+                .from(USERS)
+                .where(USERS.USERNAME.eq(username))
+                .fetchOne(0, Integer.class);
         return (result != null && result == 1);
     }
 
