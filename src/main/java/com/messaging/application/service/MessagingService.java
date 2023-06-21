@@ -114,4 +114,8 @@ public class MessagingService {
         return (result != null && result == 1);
     }
 
+    public DSLContext getDslContext(){
+        return this.dslContext;
+    }
+
 }
