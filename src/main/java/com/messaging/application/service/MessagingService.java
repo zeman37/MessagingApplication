@@ -1,6 +1,7 @@
 package com.messaging.application.service;
 
 import com.messaging.application.models.Message;
+import com.messaging.application.models.User;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Record7;
@@ -14,10 +15,7 @@ import java.math.BigDecimal;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static com.application.generated.db.Tables.MESSAGES;
 import static com.application.generated.db.Tables.USERS;
@@ -91,6 +89,13 @@ public class MessagingService {
                 .where(USERS.USERNAME.eq(username)
                         .and(USERS.PASSWORD.eq(password)))
                 .fetchOne();
+    }
+
+    public User queryUserByUsername(String username){
+        return User.mapRecordToUser(Objects.requireNonNull(dslContext
+                .selectFrom(USERS)
+                .where(USERS.USERNAME.eq(username))
+                .fetchOne()));
     }
 
     public boolean checkIfUserIsRegistered(String username, String password){

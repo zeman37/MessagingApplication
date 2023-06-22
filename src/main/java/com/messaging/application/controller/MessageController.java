@@ -5,6 +5,7 @@ import com.messaging.application.service.MessagingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -18,6 +19,7 @@ public class MessageController {
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
     public static final String USER_ALREADY_EXISTS = "User already exists.";
+    @Secured("ROLE_ADMIN")
     @PostMapping("/getMessages")
     public ResponseEntity getAllMessages(@RequestBody Map<String, String> requestBody) {
         String username = requestBody.get(USERNAME);
