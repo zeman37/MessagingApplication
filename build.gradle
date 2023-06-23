@@ -2,8 +2,6 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.1.0'
 	id 'io.spring.dependency-management' version '1.1.0'
-	id "org.springdoc.openapi-gradle-plugin" version "1.6.0"
-	id "org.openapi.generator" version "6.6.0"
 	id 'nu.studer.jooq' version '8.2'
 	id 'groovy'
 }
@@ -29,6 +27,7 @@ dependencies {
 	//Spring
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-jooq'
+	//implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
 	//Database
@@ -38,21 +37,14 @@ dependencies {
 	jooqGenerator 'org.jooq:jooq-meta-extensions-liquibase:3.18.4'
 	runtimeOnly 'com.h2database:h2'
 
-	//Security
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	testImplementation 'org.springframework.security:spring-security-test'
-	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-
 	//Misc
 	implementation 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-	implementation 'org.springdoc:springdoc-openapi-core:1.1.49'
-	implementation 'org.springdoc:springdoc-openapi-ui:1.6.15'
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.1.0'
 
 	//Test
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	//testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.codehaus.groovy:groovy-all:3.0.16'
 }
 
@@ -82,13 +74,13 @@ jooq {
 							// Specify the root path, e.g. a path in your Maven directory layout
 							property {
 								key = 'rootPath'
-								value = 'C:\\Users\\Mantas\\Desktop\\SPRING\\application'
+								value = 'src/main/resources'
 							}
 
 							// Specify the classpath location of your XML, YAML, or JSON script.
 							property {
 								key = 'scripts'
-								value = 'src/main/resources/db/changelog/changelog-master.xml'
+								value = 'db/changelog/changelog-master.xml'
 							}
 
 							// Whether you want to include liquibase tables in generated output

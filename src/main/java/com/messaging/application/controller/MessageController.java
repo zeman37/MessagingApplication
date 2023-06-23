@@ -1,14 +1,15 @@
 package com.messaging.application.controller;
 
 
+import com.messaging.application.models.DeletionForm;
+import com.messaging.application.models.LoginForm;
+import com.messaging.application.models.PostMessageForm;
 import com.messaging.application.service.MessagingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
@@ -21,10 +22,8 @@ public class MessageController {
     public static final String USER_ALREADY_EXISTS = "User already exists.";
     @Secured("ROLE_ADMIN")
     @PostMapping("/getMessages")
-    public ResponseEntity getAllMessages(@RequestBody Map<String, String> requestBody) {
-        String username = requestBody.get(USERNAME);
-        String password = requestBody.get(PASSWORD);
-        boolean isAuthenticated = messagingService.checkIfUserIsRegistered(username, password);
+    public ResponseEntity getAllMessages(@RequestBody LoginForm loginForm) {
+        boolean isAuthenticated = messagingService.checkIfUserIsRegistered(loginForm.getUsername(), loginForm.getPassword());
         if(isAuthenticated){
             return ResponseEntity.ok(messagingService.getAllMessages());
         } else{
@@ -34,12 +33,12 @@ public class MessageController {
     }
 
     @PostMapping("/postMessage")
-    public ResponseEntity<String> postMessage(@RequestBody Map<String, String> requestBody) {
-        String username = requestBody.get(USERNAME);
-        String password = requestBody.get(PASSWORD);
+    public ResponseEntity<String> postMessage(@RequestBody PostMessageForm postMessageForm) {
+        String username = postMessageForm.getUsername();
+        String password = postMessageForm.getPassword();
         boolean isAuthenticated = messagingService.checkIfUserIsRegistered(username, password);
         if(isAuthenticated){
-            String message = requestBody.get("message");
+            String message = postMessageForm.getMessageToPost();
             messagingService.postMessage(username, message);
             return ResponseEntity.ok("Successfully inserted message.");
         } else{
@@ -48,10 +47,8 @@ public class MessageController {
     }
 
     @PostMapping("/admin/getStatistics")
-    public ResponseEntity getStatistics(@RequestBody Map<String, String> requestBody) {
-        String username = requestBody.get(USERNAME);
-        String password = requestBody.get(PASSWORD);
-        boolean isAdmin = messagingService.isUserAdmin(username, password);
+    public ResponseEntity getStatistics(@RequestBody LoginForm loginForm) {
+        boolean isAdmin = messagingService.isUserAdmin(loginForm.getUsername(), loginForm.getPassword());
         if(isAdmin){
             return ResponseEntity.ok(messagingService.getStatistics());
         } else{
@@ -61,10 +58,10 @@ public class MessageController {
     }
 
     @PostMapping("/admin/createNewUser")
-    public ResponseEntity<String> createNewUser(@RequestBody Map<String, String> requestBody) {
-        String username = requestBody.get(USERNAME);
-        String password = requestBody.get(PASSWORD);
-        if (!messagingService.usernameTaken(username)) {
+    public ResponseEntity<String> createNewUser(@RequestBody LoginForm loginForm) {
+        String username = loginForm.getUsername();
+        String password = loginForm.getPassword();
+        if (!messagingService.usernameTaken(loginForm.getUsername())) {
             messagingService.createNewUser(username, password);
             return ResponseEntity.ok("Successfully created new user.\nUsername: " + username + "\nPassword: " + password);
         } else{
@@ -74,10 +71,10 @@ public class MessageController {
 
 
     @PostMapping("/admin/deleteUser")
-    public ResponseEntity<String> deleteUser(@RequestBody Map<String, String> requestBody) {
-        String username = requestBody.get(USERNAME);
-        String password = requestBody.get(PASSWORD);
-        String usernameToDelete = requestBody.get("usernameToDelete");
+    public ResponseEntity<String> deleteUser(@RequestBody DeletionForm deletionForm) {
+        String username = deletionForm.getUsername();
+        String password = deletionForm.getPassword();
+        String usernameToDelete = deletionForm.getUsernameToDelete();
         boolean isAdmin = messagingService.isUserAdmin(username, password);
         if(isAdmin){
             if(messagingService.usernameTaken(username)){
