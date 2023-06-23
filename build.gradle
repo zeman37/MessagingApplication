@@ -74,13 +74,13 @@ jooq {
 							// Specify the root path, e.g. a path in your Maven directory layout
 							property {
 								key = 'rootPath'
-								value = 'C:\\Users\\Mantas\\Desktop\\SPRING\\application'
+								value = 'src/main/resources'
 							}
 
 							// Specify the classpath location of your XML, YAML, or JSON script.
 							property {
 								key = 'scripts'
-								value = 'src/main/resources/db/changelog/changelog-master.xml'
+								value = 'db/changelog/changelog-master.xml'
 							}
 
 							// Whether you want to include liquibase tables in generated output
